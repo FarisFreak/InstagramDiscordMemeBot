@@ -9,8 +9,10 @@ import pkg from 'request-promise';
 import Embed, { EmbedType } from './Utils/Embed.js';
 import Jimp from 'jimp';
 import FFMPEG from './Utils/FFMPEG.js';
+import * as replit from './Utils/replit.js';
 
 const {get: MediaGet} = pkg;
+const _replit = replit;
 
 const readFileAsync = promisify(readFile);
 dotenv.config();
