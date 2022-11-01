@@ -1,0 +1,32 @@
+{
+  "type": "module",
+  "name": "instagramdiscordmemebot",
+  "version": "1.0.0",
+  "description": "",
+  "exports": "./dist/app.js",
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "rimraf dist && tsc",
+    "lint": "npx eslint . --ext .ts",
+    "debug": "npm run lint && npm run build && npm run start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "eslint": "^8.26.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@ffmpeg/core": "^0.11.0",
+    "@ffmpeg/ffmpeg": "^0.11.6",
+    "discord.js": "^14.6.0",
+    "dotenv": "^16.0.3",
+    "file-type": "^18.0.0",
+    "instagram-private-api": "^1.45.3",
+    "jimp": "^0.16.2"
+  }
+}
