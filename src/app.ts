@@ -37,7 +37,7 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
     let LogChannel : TextChannel;
 
     // Log in to Discord with your client's token
-    DiscordClient.login(process.env.DISCORD_TOKEN);
+    await DiscordClient.login(process.env.DISCORD_TOKEN);
 
     DiscordClient.once(Events.ClientReady, async c => {
         console.log(`Ready! Logged in as ${c.user.tag}`);
