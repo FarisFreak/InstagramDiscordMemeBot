@@ -12,7 +12,7 @@ import FFMPEG from './Utils/FFMPEG.js';
 import * as replit from './Utils/replit.js';
 
 const {get: MediaGet} = pkg;
-const _replit = replit;
+replit;
 
 const readFileAsync = promisify(readFile);
 dotenv.config();
@@ -95,18 +95,19 @@ const FFMPEGClient = new FFMPEG({
             const _MediaArrayBufferConvertedPromise = [];
             _MediaArrayBufferPromiseSec.forEach((val, idx) => {
                 if (MediaArrayType[idx] == 'PHOTO') {
-                    console.log("[dc] Converting photo ...");
+                    console.log("[dc] Converting media [photo] ...");
                     const buff = Jimp.read(val).then(data => {
                         return data.getBufferAsync(Jimp.MIME_JPEG);
                     });
                     _MediaArrayBufferConvertedPromise.push(buff);
                 } else if (MediaArrayType[idx] == 'VIDEO') {
-                    console.log("[dc] Converting video ...");
+                    console.log("[dc] Converting media [video] ...");
                     const buff = FFMPEGClient.ConvertToMP4(val);
                     _MediaArrayBufferConvertedPromise.push(buff);
                 }
             });
             const MediaArrayBuffer = await Promise.all(_MediaArrayBufferConvertedPromise);
+            console.log("[dc] Media converted!");
             
             if (MediaArrayBuffer.length == 1) {
                 if (MediaArrayType[0] == "PHOTO") {

@@ -1,6 +1,3 @@
 import http from 'http';
 
-http.createServer((req, res) => {
-    res.write("true");
-    res.end();
-}).listen(8080);
+http.createServer((req, res) => res.end("Alive")).listen(8080);
