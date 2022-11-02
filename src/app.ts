@@ -31,7 +31,7 @@ const FFMPEGClient = new FFMPEG({
     log: true
 });
 
-console.log(`FIRST BOOT AT ${new Date().toISOString()}`);
+console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: process.env.TZ })}`);
 
 (async () => {
     let LogChannel : TextChannel;
