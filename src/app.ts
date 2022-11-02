@@ -45,8 +45,10 @@ const FFMPEGClient = new FFMPEG({
 
         const loginResult = await InstagramClient.Login();
         if (loginResult.status){
+            console.log("[ig] Login successfully");
             await LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Information", "Logged in!"));
         } else {
+            console.log("[dc] Login failed. Error message : " + loginResult.data.message);
             await LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", loginResult.data.name, loginResult.data.message));
         }
 
