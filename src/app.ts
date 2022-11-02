@@ -31,6 +31,8 @@ const FFMPEGClient = new FFMPEG({
     log: true
 });
 
+console.log(`FIRST BOOT AT ${new Date().toISOString()}`);
+
 (async () => {
     let LogChannel : TextChannel;
 
