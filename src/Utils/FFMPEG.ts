@@ -21,7 +21,9 @@ export default class FFMPEG {
         return Buffer.from(this._FFMPEG.FS('readFile', 'image.jpg'));
     }
 
-    async ConvertToMP4(videoBuffer: Buffer) : Promise<Buffer> {
+    async ConvertToMP4(videoBuffer: Buffer, isMP4?: boolean) : Promise<Buffer> {
+        if (isMP4) return videoBuffer;
+        
         const fileType = await fileTypeFromBuffer(videoBuffer);
         const fileName = 'video.' + fileType.ext;
 

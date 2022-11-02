@@ -74,6 +74,7 @@ const FFMPEGClient = new FFMPEG({
 
             const _MediaArrayBufferPromise = [];
             const MediaArrayType = [];
+            const MediaArrayMime = [];
             if (message.attachments.size > 0) {
                 message.attachments.forEach(data => {
                     const ValidateData = Media.Validate(data);
@@ -85,6 +86,7 @@ const FFMPEGClient = new FFMPEG({
                         });
                         _MediaArrayBufferPromise.push(_buffer);
                         MediaArrayType.push(ValidateData.type);
+                        MediaArrayMime.push(data.contentType);
                     }
                 });
             }
@@ -102,7 +104,7 @@ const FFMPEGClient = new FFMPEG({
                     _MediaArrayBufferConvertedPromise.push(buff);
                 } else if (MediaArrayType[idx] == 'VIDEO') {
                     console.log("[dc] Converting media [video] ...");
-                    const buff = FFMPEGClient.ConvertToMP4(val);
+                    const buff = FFMPEGClient.ConvertToMP4(val, MediaArrayMime[idx] == 'video/mp4');
                     _MediaArrayBufferConvertedPromise.push(buff);
                 }
             });
