@@ -22,13 +22,15 @@ export default class FFMPEG {
     }
 
     async ConvertToMP4(videoBuffer: Buffer, isMP4?: boolean) : Promise<Buffer> {
-        if (isMP4) return videoBuffer;
-        
-        const fileType = await fileTypeFromBuffer(videoBuffer);
-        const fileName = 'video.' + fileType.ext;
-
-        this._FFMPEG.FS('writeFile', fileName, videoBuffer);
-        await this._FFMPEG.run('-i', fileName, 'output.mp4');
-        return Buffer.from(this._FFMPEG.FS('readFile', 'output.mp4'));
+        if (isMP4) {
+            return videoBuffer;
+        } else {
+            const fileType = await fileTypeFromBuffer(videoBuffer);
+            const fileName = 'video.' + fileType.ext;
+    
+            this._FFMPEG.FS('writeFile', fileName, videoBuffer);
+            await this._FFMPEG.run('-i', fileName, 'output.mp4');
+            return Buffer.from(this._FFMPEG.FS('readFile', 'output.mp4'));
+        }
     }
 }

@@ -84,6 +84,7 @@ DiscordClient.login(process.env.DISCORD_TOKEN);
             if (message.attachments.size > 0) {
                 message.attachments.forEach(data => {
                     const ValidateData = Media.Validate(data);
+                    console.log(data);
                     
                     if (ValidateData.status){
                         const _buffer = MediaGet({
@@ -93,73 +94,78 @@ DiscordClient.login(process.env.DISCORD_TOKEN);
                         _MediaArrayBufferPromise.push(_buffer);
                         MediaArrayType.push(ValidateData.type);
                         MediaArrayMime.push(data.contentType);
+                    } else {
+                        console.log("[dc] Unknown mime type : " + data.contentType);
                     }
                 });
             }
 
             const _MediaArrayBufferPromiseSec = await Promise.all(_MediaArrayBufferPromise);
 
-            //Converting all media format into instagram needs
-            const _MediaArrayBufferConvertedPromise = [];
-            _MediaArrayBufferPromiseSec.forEach((val, idx) => {
-                if (MediaArrayType[idx] == 'PHOTO') {
-                    console.log("[dc] Converting media [photo] ...");
-                    const buff = Jimp.read(val).then(data => {
-                        return data.getBufferAsync(Jimp.MIME_JPEG);
-                    });
-                    _MediaArrayBufferConvertedPromise.push(buff);
-                } else if (MediaArrayType[idx] == 'VIDEO') {
-                    console.log("[dc] Converting media [video] ...");
-                    const buff = FFMPEGClient.ConvertToMP4(val, MediaArrayMime[idx] == 'video/mp4');
-                    _MediaArrayBufferConvertedPromise.push(buff);
-                }
-            });
-            const MediaArrayBuffer = await Promise.all(_MediaArrayBufferConvertedPromise);
-            console.log("[dc] Media converted!");
-            
-            if (MediaArrayBuffer.length == 1) {
-                if (MediaArrayType[0] == "PHOTO") {
-                    console.log("[ig] Uploading photo...");
-                    const uploadResult = await InstagramClient.Upload(UploadType.PHOTO, {
-                        file: MediaArrayBuffer[0]
-                    });
-                    
-                    if (uploadResult.status){
-                        console.log("[ig] Photo uploaded successfully");
-                        LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted"));    
-                    } else {
-                        console.log("[ig] Photo uploaded failed");
-                        LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message));
-                    }
-                } else if (MediaArrayType[0] == "VIDEO") {
-                    console.log("[ig] Uploading video...");
-                    const uploadResult = await InstagramClient.Upload(UploadType.VIDEO, {
-                        video: MediaArrayBuffer[0],
-                        coverImage: await FFMPEGClient.GetFirstFrame(MediaArrayBuffer[0])
-                    });
-
-                    if (uploadResult.status){
-                        console.log("[ig] Video uploaded successfully");
-                        LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted"));    
-                    } else {
-                        console.log("[ig] Video uploaded failed");
-                        LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message));
-                    }
-                }
-            } else {
-                const AllMedia = [];
-        
-                MediaArrayBuffer.forEach((val, idx) => {
-                    if (MediaArrayType[idx] == "PHOTO")
-                        AllMedia.push({
-                            file : val
+            if (_MediaArrayBufferPromiseSec.length > 0) {
+                //Converting all media format into instagram needs
+                const _MediaArrayBufferConvertedPromise = [];
+                _MediaArrayBufferPromiseSec.forEach((val, idx) => {
+                    if (MediaArrayType[idx] == 'PHOTO') {
+                        console.log("[dc] Converting media [photo] ...");
+                        const buff = Jimp.read(val).then(data => {
+                            return data.getBufferAsync(Jimp.MIME_JPEG);
                         });
-                    else if (MediaArrayType[idx] == "VIDEO")
-                        AllMedia.push({
-                            video : val
-                        });
+                        _MediaArrayBufferConvertedPromise.push(buff);
+                    } else if (MediaArrayType[idx] == 'VIDEO') {
+                        console.log("[dc] Converting media [video] ...");
+                        const buff = FFMPEGClient.ConvertToMP4(val, MediaArrayMime[idx] == 'video/mp4');
+                        _MediaArrayBufferConvertedPromise.push(buff);
+                    }
                 });
+                const MediaArrayBuffer = await Promise.all(_MediaArrayBufferConvertedPromise);
+                console.log("[dc] Media converted!");
+                
+                if (MediaArrayBuffer.length == 1) {
+                    if (MediaArrayType[0] == "PHOTO") {
+                        console.log("[ig] Uploading photo...");
+                        const uploadResult = await InstagramClient.Upload(UploadType.PHOTO, {
+                            file: MediaArrayBuffer[0]
+                        });
+                        
+                        if (uploadResult.status){
+                            console.log("[ig] Photo uploaded successfully");
+                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted"));    
+                        } else {
+                            console.log("[ig] Photo uploaded failed");
+                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message));
+                        }
+                    } else if (MediaArrayType[0] == "VIDEO") {
+                        console.log("[ig] Uploading video...");
+                        const uploadResult = await InstagramClient.Upload(UploadType.VIDEO, {
+                            video: MediaArrayBuffer[0],
+                            coverImage: await FFMPEGClient.GetFirstFrame(MediaArrayBuffer[0])
+                        });
+    
+                        if (uploadResult.status){
+                            console.log("[ig] Video uploaded successfully");
+                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted"));    
+                        } else {
+                            console.log("[ig] Video uploaded failed");
+                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message));
+                        }
+                    }
+                } else {
+                    const AllMedia = [];
+            
+                    MediaArrayBuffer.forEach((val, idx) => {
+                        if (MediaArrayType[idx] == "PHOTO")
+                            AllMedia.push({
+                                file : val
+                            });
+                        else if (MediaArrayType[idx] == "VIDEO")
+                            AllMedia.push({
+                                video : val
+                            });
+                    });
+                }
             }
+
             
         } catch (error) {
             LogChannel.send(Embed.Message(EmbedType.Success, "Discord Log", "Error", error.message));
