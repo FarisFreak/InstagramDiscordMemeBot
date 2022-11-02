@@ -1,4 +1,4 @@
-import { APIEmbed, MessageCreateOptions } from "discord.js";
+import { APIEmbed, Message, MessageCreateOptions, ReplyOptions } from "discord.js";
 
 export enum EmbedType {
     Error = 0xff0000,
@@ -8,8 +8,8 @@ export enum EmbedType {
 }
 
 export default class Embed {
-    static Message(type: EmbedType, embed_title: string, embed_type: string, embed_message) : MessageCreateOptions {
-        return {
+    static Message(type: EmbedType, embed_title: string, embed_type: string, embed_message, message_reply?: Message) : MessageCreateOptions {
+        const output = {
             tts: false,
             embeds: [
                 <APIEmbed>{
@@ -29,6 +29,16 @@ export default class Embed {
                     }
                 }
             ]
-        }
+        };
+
+        if (message_reply != null)
+            Object.assign(output, {
+                reply: <ReplyOptions>{
+                    messageReference: message_reply,
+                    failIfNotExists: true
+                },
+            });
+
+        return output;
     }
 }
