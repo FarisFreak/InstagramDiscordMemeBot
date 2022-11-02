@@ -8,7 +8,6 @@ interface IResponse {
 
 export default class Media {
     static Validate(attachment: Attachment) : IResponse {
-        console.log(attachment.contentType);
         return {
             status : (MediaConfig[attachment.contentType] !== undefined),
             type : MediaConfig[attachment.contentType]
