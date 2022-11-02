@@ -57,9 +57,10 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
         await FFMPEGClient.Load();
     });
 
-    DiscordClient.on(Events.Error, async error => {
-        console.error(`[${new Date().toISOString()}] ${error}`);
-    })
+    DiscordClient
+        .on(Events.Error, console.error)
+        .on(Events.Debug, console.log)
+        .on(Events.Warn, console.log);
 
     DiscordClient.on(Events.MessageCreate, async message => {
         try {
