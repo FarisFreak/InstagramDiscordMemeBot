@@ -33,12 +33,11 @@ const FFMPEGClient = new FFMPEG({
 
 console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: process.env.TZ })}`);
 
-// Log in to Discord with your client's token
-DiscordClient.login(process.env.DISCORD_TOKEN);
-
 (async () => {
     let LogChannel : TextChannel;
-
+    
+    // Log in to Discord with your client's token
+    DiscordClient.login(process.env.DISCORD_TOKEN);
 
     DiscordClient.once(Events.ClientReady, async c => {
         console.log(`Ready! Logged in as ${c.user.tag}`);
@@ -95,6 +94,7 @@ DiscordClient.login(process.env.DISCORD_TOKEN);
                         MediaArrayType.push(ValidateData.type);
                         MediaArrayMime.push(data.contentType);
                     } else {
+                        LogChannel.send(Embed.Message(EmbedType.Warning, "Discord Log", "MIME", "Unknown MIME type : " + data.contentType));
                         console.log("[dc] Unknown mime type : " + data.contentType);
                     }
                 });
