@@ -10,6 +10,7 @@ import Embed, { EmbedType } from './Utils/Embed.js';
 import Jimp from 'jimp';
 import FFMPEG from './Utils/FFMPEG.js';
 import * as replit from './Utils/replit.js';
+import {Caption} from './Config.js';
 
 const {get: MediaGet} = pkg;
 replit;
@@ -84,7 +85,6 @@ DiscordClient.login(process.env.DISCORD_TOKEN);
             if (message.attachments.size > 0) {
                 message.attachments.forEach(data => {
                     const ValidateData = Media.Validate(data);
-                    console.log(data);
                     
                     if (ValidateData.status){
                         const _buffer = MediaGet({
@@ -125,7 +125,8 @@ DiscordClient.login(process.env.DISCORD_TOKEN);
                     if (MediaArrayType[0] == "PHOTO") {
                         console.log("[ig] Uploading photo...");
                         const uploadResult = await InstagramClient.Upload(UploadType.PHOTO, {
-                            file: MediaArrayBuffer[0]
+                            file: MediaArrayBuffer[0],
+                            caption: Caption
                         });
                         
                         if (uploadResult.status){
@@ -139,7 +140,8 @@ DiscordClient.login(process.env.DISCORD_TOKEN);
                         console.log("[ig] Uploading video...");
                         const uploadResult = await InstagramClient.Upload(UploadType.VIDEO, {
                             video: MediaArrayBuffer[0],
-                            coverImage: await FFMPEGClient.GetFirstFrame(MediaArrayBuffer[0])
+                            coverImage: await FFMPEGClient.GetFirstFrame(MediaArrayBuffer[0]),
+                            caption: Caption
                         });
     
                         if (uploadResult.status){
