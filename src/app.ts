@@ -60,7 +60,7 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
 
     DiscordClient
         .on(Events.Error, console.error)
-        .on(Events.Debug, console.log)
+        // .on(Events.Debug, console.log)
         .on(Events.Warn, console.log);
 
     DiscordClient.on(Events.MessageCreate, async message => {
