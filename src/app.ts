@@ -3,7 +3,7 @@ import { UploadType } from './Utils/Instagram.js';
 import * as dotenv from 'dotenv';
 import { promisify } from 'util';
 import { readFile } from 'fs';
-import { Client, Events, GatewayIntentBits, TextChannel, UserManager } from 'discord.js';
+import { AttachmentBuilder, Client, Events, GatewayIntentBits, TextChannel, UserManager } from 'discord.js';
 import Media from './Utils/Media.js';
 import pkg from 'request-promise';
 import Embed, { EmbedType } from './Utils/Embed.js';
@@ -131,11 +131,11 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
                         
                         if (uploadResult.status){
                             console.log("[ig] Photo uploaded successfully");
-                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted"));
+                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted", [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])) ] ));
                             LogChannel.send(message.attachments.first().url);
                         } else {
                             console.log("[ig] Photo uploaded failed");
-                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message));
+                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])) ] ));
                             LogChannel.send(message.attachments.first().url);
                         }
                     } else if (MediaArrayType[0] == "VIDEO") {
@@ -148,11 +148,11 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
     
                         if (uploadResult.status){
                             console.log("[ig] Video uploaded successfully");
-                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted"));
+                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted", [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])) ] ));
                             LogChannel.send(message.attachments.first().url);
                         } else {
                             console.log("[ig] Video uploaded failed");
-                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message));
+                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])) ] ));
                             LogChannel.send(message.attachments.first().url);
                         }
                     }
