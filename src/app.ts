@@ -132,11 +132,9 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
                         if (uploadResult.status){
                             console.log("[ig] Photo uploaded successfully");
                             LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted", [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.jpg') ] ));
-                            LogChannel.send(message.attachments.first().url);
                         } else {
                             console.log("[ig] Photo uploaded failed");
                             LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.jpg') ] ));
-                            LogChannel.send(message.attachments.first().url);
                         }
                     } else if (MediaArrayType[0] == "VIDEO") {
                         console.log("[ig] Uploading video...");
@@ -149,11 +147,9 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
                         if (uploadResult.status){
                             console.log("[ig] Video uploaded successfully");
                             LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted", [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.mp4') ] ));
-                            LogChannel.send(message.attachments.first().url);
                         } else {
                             console.log("[ig] Video uploaded failed");
                             LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.mp4') ] ));
-                            LogChannel.send(message.attachments.first().url);
                         }
                     }
                 } else {
