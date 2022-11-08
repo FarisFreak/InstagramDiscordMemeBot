@@ -1,4 +1,4 @@
-import { APIEmbed, Message, MessageCreateOptions, ReplyOptions } from "discord.js";
+import { APIEmbed, AttachmentBuilder, Message, MessageCreateOptions, ReplyOptions } from "discord.js";
 
 export enum EmbedType {
     Error = 0xff0000,
@@ -8,7 +8,7 @@ export enum EmbedType {
 }
 
 export default class Embed {
-    static Message(type: EmbedType, embed_title: string, embed_type: string, embed_message, message_reply?: Message) : MessageCreateOptions {
+    static Message(type: EmbedType, embed_title: string, embed_type: string, embed_message, embed_attachment?: Array<AttachmentBuilder>) : MessageCreateOptions {
         const output = {
             tts: false,
             embeds: [
@@ -31,14 +31,12 @@ export default class Embed {
             ]
         };
 
-        if (message_reply != null)
+        if (embed_attachment != null) {
             Object.assign(output, {
-                reply: <ReplyOptions>{
-                    messageReference: message_reply,
-                    failIfNotExists: true
-                },
+                files : embed_attachment
             });
-
+        }
+        
         return output;
     }
 }
