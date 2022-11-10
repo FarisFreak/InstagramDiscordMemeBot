@@ -8,9 +8,10 @@ import {
     PostingStoryVideoOptions
 } from 'instagram-private-api';
 
-interface IResponse {
+export interface IResponse {
     status: boolean;
     data: any;
+    type: UploadType;
 }
 
 export enum UploadType {
@@ -20,8 +21,8 @@ export enum UploadType {
 }
 
 export default class Instagram {
-    Instagram: IgApiClient = new IgApiClient();
-    isLoggedIn: boolean = false;
+    private Instagram: IgApiClient = new IgApiClient();
+    private isLoggedIn: boolean = false;
 
     constructor (public Username: string, public Password: string){
         this.Instagram.state.generateDevice(this.Username);
@@ -75,25 +76,31 @@ export default class Instagram {
                     const result = await this.Instagram.publish.album(options);
                     output.status = true;
                     output.data = result;
+                    output.type = type;
                 } else if (type == UploadType.PHOTO) {  // Photo upload
                     const result = await this.Instagram.publish.photo(options);
                     output.status = true;
                     output.data = result;
+                    output.type = type;
                 } else if (type == UploadType.VIDEO) {  // Video upload
                     const result = await this.Instagram.publish.video(options);
                     output.status = true;
                     output.data = result;
+                    output.type = type;
                 } else {
                     output.status = false;
                     output.data = "Invalid UploadType";
+                    output.type = type;
                 }
             } else {
                 output.status = false;
                 output.data = "Login first.";
+                output.type = type;
             }
         } catch (error) {
             output.status = false;
             output.data = error;
+            output.type = type;
         }
         return output;
     }

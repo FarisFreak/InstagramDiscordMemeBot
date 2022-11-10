@@ -1,5 +1,5 @@
 import Instagram from './Utils/Instagram.js';
-import { UploadType } from './Utils/Instagram.js';
+import { UploadType, IResponse } from './Utils/Instagram.js';
 import * as dotenv from 'dotenv';
 import { promisify } from 'util';
 import { readFile } from 'fs';
@@ -65,6 +65,9 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
 
     DiscordClient.on(Events.MessageCreate, async message => {
         try {
+            if (message.author.bot)
+                return;
+
             if (message.author.id == DiscordClient.user.id)
                 return;
     
@@ -122,35 +125,39 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
                 console.log("[dc] Media converted!");
                 
                 if (MediaArrayBuffer.length == 1) {
-                    if (MediaArrayType[0] == "PHOTO") {
-                        console.log("[ig] Uploading photo...");
-                        const uploadResult = await InstagramClient.Upload(UploadType.PHOTO, {
-                            file: MediaArrayBuffer[0],
-                            caption: Caption
-                        });
+                    let uploadResult : IResponse;
+
+                    switch (MediaArrayType[0]) {
+                        case 'PHOTO':
+                            console.log("[ig] Uploading photo...");
+                            uploadResult = await InstagramClient.Upload(UploadType.PHOTO, {
+                                file: MediaArrayBuffer[0],
+                                caption: Caption
+                            });
+                            break;
                         
-                        if (uploadResult.status){
-                            console.log("[ig] Photo uploaded successfully");
-                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted", [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.jpg') ] ));
-                        } else {
-                            console.log("[ig] Photo uploaded failed");
-                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.jpg') ] ));
-                        }
-                    } else if (MediaArrayType[0] == "VIDEO") {
-                        console.log("[ig] Uploading video...");
-                        const uploadResult = await InstagramClient.Upload(UploadType.VIDEO, {
-                            video: MediaArrayBuffer[0],
-                            coverImage: await FFMPEGClient.GetFirstFrame(MediaArrayBuffer[0]),
-                            caption: Caption
-                        });
-    
-                        if (uploadResult.status){
-                            console.log("[ig] Video uploaded successfully");
-                            LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", "Post successfully posted", [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.mp4') ] ));
-                        } else {
-                            console.log("[ig] Video uploaded failed");
-                            LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName('file.mp4') ] ));
-                        }
+                        case 'VIDEO':
+                            console.log("[ig] Uploading video...");
+                            uploadResult = await InstagramClient.Upload(UploadType.VIDEO, {
+                                video: MediaArrayBuffer[0],
+                                coverImage: await FFMPEGClient.GetFirstFrame(MediaArrayBuffer[0]),
+                                caption: Caption
+                            });
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    const attachmentExt = uploadResult.type == UploadType.PHOTO ? 'jpg' : uploadResult.type == UploadType.VIDEO ? 'mp4' : '';
+                    const attachmentType = uploadResult.type == UploadType.PHOTO ? 'Photo' : uploadResult.type == UploadType.VIDEO ? 'Video' : '';
+
+                    if (uploadResult.status){
+                        console.log(`[ig] ${attachmentType} uploaded successfully`);
+                        LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", `Post successfully posted. Submitted by <@${message.author.id}>`, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName(`file.${attachmentExt}`) ] ));
+                    } else {
+                        console.log(`[ig] ${attachmentType} uploaded failed`);
+                        LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName(`file.${attachmentExt}`) ] ));
                     }
                 } else {
                     const AllMedia = [];
