@@ -1,8 +1,6 @@
 import Instagram from './Utils/Instagram.js';
 import { UploadType, IResponse } from './Utils/Instagram.js';
 import * as dotenv from 'dotenv';
-import { promisify } from 'util';
-import { readFile } from 'fs';
 import { AttachmentBuilder, Client, Events, GatewayIntentBits, TextChannel, UserManager } from 'discord.js';
 import Media from './Utils/Media.js';
 import pkg from 'request-promise';
@@ -14,8 +12,6 @@ import {Caption} from './Config.js';
 
 const {get: MediaGet} = pkg;
 replit;
-
-const readFileAsync = promisify(readFile);
 dotenv.config();
 
 const InstagramClient = new Instagram(process.env.IG_USERNAME, process.env.IG_PASSWORD);
@@ -29,8 +25,14 @@ const DiscordClient = new Client({
 });
 
 const FFMPEGClient = new FFMPEG({
-    log: true
+    log: process.env.APP_ENV === 'development'
 });
+
+if (process.env.APP_ENV === 'development')
+    DiscordClient
+        .on(Events.Error, console.error)
+        .on(Events.Debug, console.log)
+        .on(Events.Warn, console.log);
 
 console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: process.env.TZ })}`);
 
@@ -57,11 +59,6 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
 
         await FFMPEGClient.Load();
     });
-
-    DiscordClient
-        .on(Events.Error, console.error)
-        // .on(Events.Debug, console.log)
-        .on(Events.Warn, console.log);
 
     DiscordClient.on(Events.MessageCreate, async message => {
         try {
