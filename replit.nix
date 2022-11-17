@@ -1,8 +1,5 @@
 { pkgs }: {
     deps = [
-        pkgs.toybox
-        pkgs.nettools
-        pkgs.exit
         pkgs.yarn
         pkgs.esbuild
         pkgs.nodejs-16_x
