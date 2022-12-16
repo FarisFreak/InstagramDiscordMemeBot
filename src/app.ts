@@ -44,6 +44,7 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
 
     DiscordClient.once(Events.ClientReady, async c => {
         console.log(`Ready! Logged in as ${c.user.tag}`);
+        DiscordClient.user.setActivity('Ready to upload your meme!');
 
         LogChannel = DiscordClient.channels.cache.get(process.env.LOG_CHANNEL_ID) as TextChannel;
         await LogChannel.send(Embed.Message(EmbedType.Success, "Discord Log", "Information", "Online!"));
@@ -104,6 +105,7 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
 
             if (_MediaArrayBufferPromiseSec.length > 0) {
                 //Converting all media format into instagram needs
+                DiscordClient.user.setActivity('Processing meme...');
                 const _MediaArrayBufferConvertedPromise = [];
                 _MediaArrayBufferPromiseSec.forEach((val, idx) => {
                     if (MediaArrayType[idx] == 'PHOTO') {
@@ -151,9 +153,11 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
 
                     if (uploadResult.status){
                         console.log(`[ig] ${attachmentType} uploaded successfully`);
+                        message.react('✔');
                         LogChannel.send(Embed.Message(EmbedType.Success, "Instagram Log", "Upload Status", `Post successfully posted. Submitted by <@${message.author.id}>`, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName(`file.${attachmentExt}`) ] ));
                     } else {
                         console.log(`[ig] ${attachmentType} uploaded failed`);
+                        message.react('❌');
                         LogChannel.send(Embed.Message(EmbedType.Error, "Instagram Log", uploadResult.data.name, uploadResult.data.message, [ new AttachmentBuilder(Media.BufferToStream(MediaArrayBuffer[0])).setName(`file.${attachmentExt}`) ] ));
                     }
                 } else {
@@ -172,7 +176,7 @@ console.log(`FIRST BOOT AT ${new Date().toLocaleString('en-US', { timeZone: proc
                 }
             }
 
-            
+            DiscordClient.user.setActivity('Ready to upload your meme!');
         } catch (error) {
             LogChannel.send(Embed.Message(EmbedType.Success, "Discord Log", "Error", error.message));
         }
